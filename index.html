@@ -35,7 +35,7 @@
                         <!-- Campo Cep -->
                         <div class="col-sm-3">
                             <label for="inputCep" class="form-label">Pesquise pelo CEP:</label>
-                            <input type="text" class="form-control" id="inputCep" required>
+                            <input type="text" onblur="onblur()" class="form-control" id="inputCep" required>
                         </div>
 
                         <div class="row mb-3">
@@ -119,6 +119,7 @@
         <script src="JS/jquery.mask.min.js"></script>
         <script>$("#inputCep").mask("00000-000");
         </script>
+        <script src="JS/script.js"></script>
 </body>
 
 </html>
