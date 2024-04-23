@@ -57,3 +57,63 @@ function onblur(){
                 console.error('Erro ao buscar o CEP:', error);
             });
 }
+
+var dados = [
+    {
+        id: 1,
+        name: "Glauco",
+        lastname: "Todesco",
+        adress: "Rua Leite Penteado",
+        CEP: "18010-050",
+        neighboor: "Centro",
+        city: "Sorocaba",
+        state: "SP"
+    },
+];
+
+function loadDados() {
+    for (let data of dados) {
+        addNewRow(data);
+    }
+}
+
+function save() {
+    var data = {
+        id: dados.length + 1,
+        name: document.getElementById("inputName").value,
+        lastname: document.getElementById("inputLastname").value,
+        adress: document.getElementById("inputAdress").value,
+        CEP: document.getElementById("inputCep").value,
+        neighboor: document.getElementById("inputNeighboor").value,
+        city: document.getElementById("inputCity").value,
+        state: document.getElementById("inputState").value,
+    };
+
+    // Adiciona os dados à tabela e ao array 'dados'
+    addNewRow(data);
+    dados.push(data);
+
+    // Limpa o formulário após salvar os dados
+    document.getElementById("formAdress").reset();
+}
+
+function addNewRow(data) {
+    // Seleciona a tabela e seu corpo (tbody)
+    const table = document.querySelector('table');
+    const tbody = table.querySelector('tbody');
+
+    // Cria uma nova linha (tr) para os dados recebidos
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <th scope="row">${data.id}</th>
+        <td>${data.name} ${data.lastname}</td>
+        <td>${data.adress}</td>
+        <td>${data.CEP}</td>
+        <td>${data.neighboor}</td>
+        <td>${data.city}</td>
+        <td>${data.state}</td>
+    `;
+
+    // Adiciona a nova linha ao corpo da tabela
+    tbody.appendChild(newRow);
+}
