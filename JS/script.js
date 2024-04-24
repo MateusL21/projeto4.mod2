@@ -1,119 +1,112 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Seletor para o campo de entrada do CEP
-    const inputCep = document.getElementById("inputCep");
+function CepSearch() {
+    var CEP = document.getElementById("inputCep").value;
+    var url = `https://viacep.com.br/ws/${CEP}/json/`;
 
-    // Adiciona um evento de escuta para o evento de mudança de valor no campo de CEP
-    inputCep.addEventListener("change", function () {
-        const cep = inputCep.value.replace(/\D/g, ''); // Remove caracteres não numéricos do CEP
+    $.getJSON(url, (response) => {
+        if (!response.erro) {
+            
+            document.getElementById("inputAddress").value = response.logradouro;
+            document.getElementById("inputCity").value = response.localidade;
+            document.getElementById("inputNeighboor").value = response.bairro;
+            document.getElementById("inputState").value = response.uf;
 
-        // Verifica se o CEP tem o tamanho correto
-        if (cep.length === 8) {
-            const url = `https://viacep.com.br/ws/${cep}/json/`;
+            var errorElement = document.getElementById("error");
+            if (errorElement) {
+                errorElement.innerText = "";
+            }
 
-            // Faz a requisição para a API do ViaCEP
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    // Exemplo de como você pode utilizar os dados recebidos da API
-                    document.getElementById("inputAdress").value = data.logradouro;
-                    document.getElementById("inputNeighboor").value = data.bairro;
-                    document.getElementById("inputCity").value = data.localidade;
-                    document.getElementById("inputState").value = data.uf;
-                })
-                .catch(error => {
-                    console.error('Erro ao buscar o CEP:', error);
-                });
+            var inputNumber = document.getElementById("inputNumber");
+            if (inputNumber) {
+                inputNumber.readOnly = false;
+                inputNumber.classList.remove("bg-body-secondary");
+            }
+        } else {
+            
+            document.getElementById("inputAddress").value = "";
+            document.getElementById("inputCity").value = "";
+            document.getElementById("inputNeighboor").value = "";
+            document.getElementById("inputState").value = "";
+
+            var errorElement = document.getElementById("error");
+            if (errorElement) {
+                errorElement.innerText = "CEP não encontrado.";
+            }
+
+            var inputNumber = document.getElementById("inputNumber");
+            if (inputNumber) {
+                inputNumber.readOnly = true;
+                inputNumber.classList.add("bg-body-secondary"); 
+            }
+        }
+    }).fail(function() {
+       
+        var errorElement = document.getElementById("error");
+        if (errorElement) {
+            errorElement.innerText = "CEP Inválido."; 
+        }
+
+        var inputNumber = document.getElementById("inputNumber");
+        if (inputNumber) {
+            inputNumber.readOnly = true;
+            inputNumber.classList.add("bg-body-secondary");
         }
     });
-});
-
-function onblur(){
-    const inputCep = document.getElementById("inputCep");
-        const cep = inputCep.value.replace(/\D/g, ''); // Remove caracteres não numéricos do CEP
-
-        if (cep.length !== 8) {
-            alert('CEP inválido. O CEP deve conter exatamente 8 dígitos.');
-            return;
-        }
-
-        const url = `https://viacep.com.br/ws/${cep}/json/`;
-
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('CEP não encontrado.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Preenche os campos de endereço com os dados obtidos
-                document.getElementById("inputAdress").value = data.logradouro;
-                document.getElementById("inputNeighboor").value = data.bairro;
-                document.getElementById("inputCity").value = data.localidade;
-                document.getElementById("inputState").value = data.uf;
-            })
-            .catch(error => {
-                alert('Erro ao buscar o CEP. Verifique se o CEP está correto e tente novamente.');
-                console.error('Erro ao buscar o CEP:', error);
-            });
 }
 
-var dados = [
-    {
-        id: 1,
-        name: "Glauco",
-        lastname: "Todesco",
-        adress: "Rua Leite Penteado",
-        CEP: "18010-050",
-        neighboor: "Centro",
-        city: "Sorocaba",
-        state: "SP"
-    },
-];
-
-function loadDados() {
-    for (let data of dados) {
-        addNewRow(data);
-    }
-}
+var dados = []; 
 
 function save() {
-    var data = {
+    event.preventDefault(); 
+
+    var name = document.getElementById("inputName").value;
+    var lastname = document.getElementById("inputLastname").value;
+    var address = document.getElementById("inputAddress").value;
+    var number = document.getElementById("inputNumber").value;
+    var CEP = document.getElementById("inputCep").value;
+    var neighboor = document.getElementById("inputNeighboor").value;
+    var city = document.getElementById("inputCity").value;
+    var state = document.getElementById("inputState").value;
+
+    var clientData = {
         id: dados.length + 1,
-        name: document.getElementById("inputName").value,
-        lastname: document.getElementById("inputLastname").value,
-        adress: document.getElementById("inputAdress").value,
-        CEP: document.getElementById("inputCep").value,
-        neighboor: document.getElementById("inputNeighboor").value,
-        city: document.getElementById("inputCity").value,
-        state: document.getElementById("inputState").value,
+        name: name,
+        lastname: lastname,
+        address: address,
+        number: number,
+        CEP: CEP,
+        neighboor: neighboor,
+        city: city,
+        state: state
     };
 
-    // Adiciona os dados à tabela e ao array 'dados'
-    addNewRow(data);
-    dados.push(data);
+    dados.push(clientData);
 
-    // Limpa o formulário após salvar os dados
-    document.getElementById("formAdress").reset();
+    addNewRow(clientData);
+
+    document.getElementById("inputName").value = "";
+    document.getElementById("inputLastname").value = "";
+    document.getElementById("inputAddress").value = "";
+    document.getElementById("inputNumber").value = "";
+    document.getElementById("inputCep").value = "";
+    document.getElementById("inputNeighboor").value = "";
+    document.getElementById("inputCity").value = "";
+    document.getElementById("inputState").value = "";
 }
 
 function addNewRow(data) {
-    // Seleciona a tabela e seu corpo (tbody)
-    const table = document.querySelector('table');
-    const tbody = table.querySelector('tbody');
+    
+    var tbody = document.getElementById("clientesTableBody");
 
-    // Cria uma nova linha (tr) para os dados recebidos
-    const newRow = document.createElement('tr');
+    var newRow = document.createElement("tr");
     newRow.innerHTML = `
         <th scope="row">${data.id}</th>
         <td>${data.name} ${data.lastname}</td>
-        <td>${data.adress}</td>
+        <td>${data.address}, ${data.number}</td>
         <td>${data.CEP}</td>
         <td>${data.neighboor}</td>
         <td>${data.city}</td>
         <td>${data.state}</td>
     `;
 
-    // Adiciona a nova linha ao corpo da tabela
     tbody.appendChild(newRow);
 }
