@@ -55,14 +55,32 @@ function CepSearch() {
 
 var dados = []; 
 
-function save() {
-    event.preventDefault(); 
+function save(event) {
+    event.preventDefault();
+
+    var CEP = document.getElementById("inputCep").value;
+
+    if (CEP === "" || CEP.length !== 9 || CEP.indexOf("-") !== 5) {
+        var errorElement = document.getElementById("error");
+        if (errorElement) {
+            errorElement.innerText = "CEP Inválido.";
+        }
+
+        var inputNumber = document.getElementById("inputNumber");
+        if (inputNumber) {
+            inputNumber.readOnly = true;
+            inputNumber.classList.add("bg-body-secondary");
+        }
+
+        return;
+    }
+
+    CepSearch();
 
     var name = document.getElementById("inputName").value;
     var lastname = document.getElementById("inputLastname").value;
     var address = document.getElementById("inputAddress").value;
     var number = document.getElementById("inputNumber").value;
-    var CEP = document.getElementById("inputCep").value;
     var neighboor = document.getElementById("inputNeighboor").value;
     var city = document.getElementById("inputCity").value;
     var state = document.getElementById("inputState").value;
@@ -79,7 +97,9 @@ function save() {
         state: state
     };
 
-    dados.push(clientData);
+    if (name === "" || lastname === "" || address === "" || number === "" || city === "" || neighboor === "" || state === "") {
+        return;
+    }
 
     addNewRow(clientData);
 
@@ -95,6 +115,10 @@ function save() {
 
 function addNewRow(data) {
     
+    if (data.CEP === "" || data.address === "" || data.number === "" || data.city === "" || data.neighboor === "" || data.state === "") {
+        return;
+    }
+
     var tbody = document.getElementById("clientesTableBody");
 
     var newRow = document.createElement("tr");
